@@ -5,7 +5,7 @@
 
 # Base paths - MODIFY THESE
 export WORKSPACE_DIR="$(pwd)"                      # Path to project root directory
-export DATASET_PATH="./examples/data/mathv_demo.json"  # Path to your dataset
+export DATASET_PATH="./examples/scripts/lmm_r1/mathv_demo.json"  # Path to your dataset
 export PRETRAIN_MODEL_PATH="/fs-computility/mllm/shared/dongxiaoyi/share_model/Qwen2.5-VL-3B-Instruct"  # Path to pretrained model
 export SAVE_PATH="./checkpoints"                   # Absolute path to save checkpoints
 
