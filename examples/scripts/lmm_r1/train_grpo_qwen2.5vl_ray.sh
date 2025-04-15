@@ -54,7 +54,7 @@ ray start --head --node-ip-address 0.0.0.0 --num-gpus 8 --temp-dir ~/.cache/ray
 
 # Start remote reward model server
 echo "Starting remote reward model server..."
-python -m openrlhf.models.remote_rm.math_verifier \
+python -m openrlhf.models.remote_rm.math_verifier_2 \
     --dataset "${DATASET_PATH}" \
     --input_key message \
     --prompt-template chatml 2>&1 | tee -a "${CUR_LOG_DIR}/remote_rm.log" &
@@ -82,11 +82,11 @@ ray job submit --address="http://127.0.0.1:8265" \
    --pretrain ${PRETRAIN_MODEL_PATH} \
    --save_path ${SAVE_PATH}/${MODEL_NAME} \
    --micro_train_batch_size 2 \
-   --train_batch_size 256 \
+   --train_batch_size 64 \
    --micro_rollout_batch_size 2 \
-   --rollout_batch_size 256 \
+   --rollout_batch_size 64 \
    --temperature 1.0 \
-   --n_samples_per_prompt 16 \
+   --n_samples_per_prompt 4 \
    --max_epochs 1 \
    --num_episodes 2 \
    --prompt_max_len 4096 \
