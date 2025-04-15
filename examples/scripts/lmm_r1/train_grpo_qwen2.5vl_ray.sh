@@ -7,10 +7,13 @@
 export WORKSPACE_DIR="$(pwd)"                      # Path to project root directory
 export DATASET_PATH="./examples/scripts/lmm_r1/mathv_demo.json"  # Path to your dataset
 export PRETRAIN_MODEL_PATH="/fs-computility/mllm/shared/dongxiaoyi/share_model/Qwen2.5-VL-3B-Instruct"  # Path to pretrained model
-export SAVE_PATH="./checkpoints"                   # Absolute path to save checkpoints
+export WANDB_PROJECT="Qwen2.5-VL-3B-GRPO"
+MODEL_CPK_NAME="test-v1"
+export SAVE_PATH="/fs-computility/mllm/liangjianze/test/0409/lmm-r1/ckpts/${WANDB_PROJECT}"                   # Absolute path to save checkpoints
+# mkdir -p "${SAVE_PATH}/${MODEL_CPK_NAME}"
 
 # Model configuration
-export MODEL_NAME="qwen2.5-3b-test-v1"              # Name for this training run
+# export MODEL_NAME="qwen2.5-3b-test-v1"              # Name for this training run
 
 # Wandb configuration (optional)
 # export WANDB_DIR="${WORKSPACE_DIR}"                # Directory for wandb files
@@ -23,14 +26,14 @@ export MODEL_NAME="qwen2.5-3b-test-v1"              # Name for this training run
 # Get script PID and setup directories
 SCRIPT_PID=$$
 export TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-export LOG_DIR="${SAVE_PATH}/${MODEL_NAME}/logs"
+export LOG_DIR="${SAVE_PATH}/${MODEL_CPK_NAME}/logs"
 export CUR_LOG_DIR="${LOG_DIR}/${TIMESTAMP}"
 
 # Stop any existing ray processes
 ray stop
 
 # Create necessary directories
-mkdir -p "${SAVE_PATH}/${MODEL_NAME}"
+mkdir -p "${SAVE_PATH}/${MODEL_CPK_NAME}"
 mkdir -p "${LOG_DIR}"
 mkdir -p "${CUR_LOG_DIR}"
 
@@ -38,7 +41,7 @@ mkdir -p "${CUR_LOG_DIR}"
 echo "================================================================"
 echo "LMM-R1 MGT Geometry Training"
 echo "================================================================"
-echo "Model name: ${MODEL_NAME}"
+echo "Model name: ${WANDB_PROJECT}/${MODEL_CPK_NAME}"
 echo "Dataset: ${DATASET_PATH}"
 echo "Pretrained model: ${PRETRAIN_MODEL_PATH}"
 echo "Logs will be saved to: ${CUR_LOG_DIR}"
@@ -80,7 +83,7 @@ ray job submit --address="http://127.0.0.1:8265" \
    --vllm_sync_backend gloo \
    --enable_prefix_caching \
    --pretrain ${PRETRAIN_MODEL_PATH} \
-   --save_path ${SAVE_PATH}/${MODEL_NAME} \
+   --save_path $SAVE_PATH/$MODEL_CPK_NAME \
    --micro_train_batch_size 2 \
    --train_batch_size 64 \
    --micro_rollout_batch_size 2 \
@@ -88,15 +91,15 @@ ray job submit --address="http://127.0.0.1:8265" \
    --temperature 1.0 \
    --n_samples_per_prompt 4 \
    --max_epochs 1 \
-   --num_episodes 2 \
-   --prompt_max_len 4096 \
+   --num_episodes 1 \
+   --prompt_max_len 8192 \
    --max_samples 100000 \
-   --generate_max_len 4096 \
+   --generate_max_len 768 \
    --kl_estimator k3 \
    --advantage_estimator group_norm \
    --zero_stage 3 \
    --bf16 \
-   --actor_learning_rate 1e-6 \
+   --actor_learning_rate 5e-7 \
    --init_kl_coef 0.001 \
    --prompt_data ${DATASET_PATH} \
    --input_key message \
@@ -105,8 +108,8 @@ ray job submit --address="http://127.0.0.1:8265" \
    --lambd 1 \
    --gamma 1 \
    --gradient_checkpointing \
-   --save_steps 20 \
-   --ckpt_path ${SAVE_PATH}/${MODEL_NAME}/ckpt \
+   --save_steps 50 \
+   --ckpt_path $SAVE_PATH/$MODEL_CPK_NAME/ckpt \
    --save_hf_ckpt \
    --load_checkpoint \
    --use_tensorboard ${LOG_DIR} > >(tee -a "${CUR_LOG_DIR}/train.log") 2>&1 &
