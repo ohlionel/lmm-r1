@@ -92,7 +92,8 @@ ray job submit --address="http://127.0.0.1:8265" \
    --prompt_max_len 4096 \
    --max_samples 100000 \
    --generate_max_len 4096 \
-   --advantage_estimator gae \
+   --kl_estimator k3 \
+   --advantage_estimator group_norm \
    --zero_stage 3 \
    --bf16 \
    --actor_learning_rate 1e-6 \

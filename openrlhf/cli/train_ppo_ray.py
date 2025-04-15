@@ -98,8 +98,8 @@ def train(args):
         )
 
     actor_model = PPORayActorGroup(
-        args.actor_num_nodes,
-        args.actor_num_gpus_per_node,
+        args.actor_num_nodes, #节点数
+        args.actor_num_gpus_per_node, #单节点使用卡数
         ActorModelRayActor,
         pg=pg,
         num_gpus_per_actor=0.2 if pg else 1,
