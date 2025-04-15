@@ -75,7 +75,8 @@ def verify_math(input_queue, output_queue):
         if len(gold_parsed) != 0:
             # We require the answer to be provided in correct latex (no malformed operators)
             # pattern = re.compile(r"</think>\s*<answer>.*?\\boxed{(.*)}.*?</answer>", re.DOTALL)
-            pattern = re.compile(r"<answer>(.*?)</answer>", re.DOTALL)
+            # pattern = re.compile(r"<answer>(.*?)</answer>", re.DOTALL)
+            pattern = re.compile(r"(\\boxed{.*})")
             matches = re.findall(pattern, content)
             if len(matches) > 0:
                 answer_parsed = matches[-1]
