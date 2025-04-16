@@ -63,7 +63,7 @@ def verify_math(queries, prompts, labels):
             # If the gold solution is not parseable, we reward 1 to skip this example
             reward = 1.0
             print("Failed to parse gold solution: ", query)
-        print(f"label: {label}, answer_parsed: {answer_parsed}, reward: {reward}")
+        print(f"label: {label}, predict: {math_answer}, reward: {reward}")
         rewards.append(reward)
     
     return {"rewards": rewards}
