@@ -9,11 +9,12 @@ from multiprocessing import Process, Queue
 import Levenshtein
 from flask import Flask, jsonify, request
 from latex2sympy2_extended import NormalizationConfig
-from math_verify import LatexExtractionConfig, parse, verify
+from openrlhf.models.remote_rm.rm_func.func import LatexExtractionConfig, parse, verify
 from openrlhf.models.math_utils import is_equal
 
 format_pattern = r"^<think>(?:(?!</think>).)*</think>\s*<answer>(?:(?!</answer>).)*</answer>\Z"
 response_prefix = r"<\|im_start\|>assistant\n"
+answer_pattern =r"(\\boxed{.*})"
 
 def verify_format(content):
     """
@@ -32,6 +33,17 @@ def math_parse(content):
             extraction_mode="first_match",
             extraction_config=[LatexExtractionConfig()],
         )
+    
+def get_response_from_query(q: str):
+    ends_of_sentence = ["<|im_end|>", "<｜end▁of▁sentence｜>", "<|endoftext|>"]
+    pos = re.search(response_prefix, q)
+    if pos is None:
+        return None
+    response = q[pos.end() :]
+    for e in ends_of_sentence:
+        response = response.replace(e, "")
+    return response.strip()
+
  
 def verify_math(queries, prompts, labels):
     rewards = []
@@ -39,8 +51,9 @@ def verify_math(queries, prompts, labels):
         gold_parsed = label
         if len(gold_parsed) != 0:
             # We require the answer to be provided in correct latex (no malformed operators)
-            pattern = re.compile(r"(\\boxed{.*})", re.DOTALL)
-            matches = re.findall(pattern, query)
+            response = get_response_from_query(query)
+            pattern = re.compile(answer_pattern, re.DOTALL)
+            matches = re.findall(pattern, response)
             if len(matches) > 0:
                 answer_parsed = matches[-1]
             else:
@@ -60,7 +73,8 @@ def verify_math(queries, prompts, labels):
             # If the gold solution is not parseable, we reward 1 to skip this example
             reward = 1.0
             print("Failed to parse gold solution: ", query)
+        print(f"label: {label}, answer_parsed: {answer_parsed}, reward: {reward}")
         rewards.append(reward)
     
-    return jsonify({"rewards": rewards})
+    return {"rewards": rewards}
 
