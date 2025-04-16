@@ -103,7 +103,6 @@ if [ $NODE_RANK -eq 0 ]; then
     --zero_stage 3 \
     --bf16 \
     --actor_learning_rate 5e-7 \
-    --lr_warmup_steps 50 \
     --init_kl_coef 0.001 \
     --prompt_data ${DATASET_PATH} \
     --input_key message \
