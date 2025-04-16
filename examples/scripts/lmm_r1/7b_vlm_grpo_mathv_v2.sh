@@ -7,9 +7,9 @@
 export WORKSPACE_DIR="$(pwd)"                      # Path to project root directory
 export DATASET_PATH="/fs-computility/mllm/shared/liangjianze/share_data/mix_mathv.json"  # Path to your dataset
 export PRETRAIN_MODEL_PATH="/fs-computility/mllm/shared/dongxiaoyi/share_model/Qwen2.5-VL-7B-Instruct"  # Path to pretrained model
-export WANDB_PROJECT="Qwen2.5-VL-7B-GRPO"
-MODEL_CPK_NAME="mathv_v2"
-export SAVE_PATH="/fs-computility/mllm/liangjianze/test/0409/lmm-r1/ckpts/${WANDB_PROJECT}"                   # Absolute path to save checkpoints
+export WANDB_PROJECT="Qwen2.5-VL-7B-GRPO-MathV"
+MODEL_CPK_NAME="baseline"
+export SAVE_PATH="/fs-computility/mllm/liangjianze/exp/lmm-r1/ckpts/${WANDB_PROJECT}"                   # Absolute path to save checkpoints
 # mkdir -p "${SAVE_PATH}/${MODEL_CPK_NAME}"
 
 # Model configuration
