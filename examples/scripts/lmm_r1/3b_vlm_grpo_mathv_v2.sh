@@ -6,9 +6,9 @@
 # Base paths - MODIFY THESE
 export WORKSPACE_DIR="$(pwd)"                      # Path to project root directory
 export DATASET_PATH="/fs-computility/mllm/shared/liangjianze/share_data/mix_mathv.json"  # Path to your dataset
-export PRETRAIN_MODEL_PATH="/fs-computility/mllm/shared/dongxiaoyi/share_model/Qwen2.5-VL-7B-Instruct"  # Path to pretrained model
-export WANDB_PROJECT="Qwen2.5-VL-7B-GRPO"
-MODEL_CPK_NAME="mathv_v1"
+export PRETRAIN_MODEL_PATH="/fs-computility/mllm/shared/dongxiaoyi/share_model/Qwen2.5-VL-3B-Instruct"  # Path to pretrained model
+export WANDB_PROJECT="Qwen2.5-VL-3B-GRPO"
+MODEL_CPK_NAME="mathv_v2"
 export SAVE_PATH="/fs-computility/mllm/liangjianze/test/0409/lmm-r1/ckpts/${WANDB_PROJECT}"                   # Absolute path to save checkpoints
 # mkdir -p "${SAVE_PATH}/${MODEL_CPK_NAME}"
 
@@ -56,12 +56,6 @@ echo "Starting ray..."
 ray start --head --node-ip-address 0.0.0.0 --num-gpus 8 --temp-dir ~/.cache/ray
 
 # Start remote reward model server
-echo "Starting remote reward model server..."
-python -m openrlhf.models.remote_rm.math_verifier_2 \
-    --dataset "${DATASET_PATH}" \
-    --input_key message \
-    --prompt-template chatml 2>&1 | tee -a "${CUR_LOG_DIR}/remote_rm.log" &
-REMOTE_RM_PID=$!
 
 # Start training
 echo "Starting training..."
@@ -70,7 +64,7 @@ ray job submit --address="http://127.0.0.1:8265" \
    -- python -m openrlhf.cli.train_ppo_ray \
    --ref_num_nodes 1 \
    --ref_num_gpus_per_node 8 \
-   --remote_rm_url http://127.0.0.1:5000/get_reward \
+   --remote_rm_url verify_math  \
    --actor_num_nodes 1 \
    --actor_num_gpus_per_node 8 \
    --critic_num_nodes 1 \
@@ -120,7 +114,7 @@ ray job submit --address="http://127.0.0.1:8265" \
 TRAIN_PID=$!
 
 # Record process IDs
-echo "Remote RM PID: $REMOTE_RM_PID" > "${CUR_LOG_DIR}/process_pids.txt"
+# echo "Remote RM PID: $REMOTE_RM_PID" > "${CUR_LOG_DIR}/process_pids.txt"
 echo "Train PID: $TRAIN_PID" >> "${CUR_LOG_DIR}/process_pids.txt"
 
 # Wait for training to complete
