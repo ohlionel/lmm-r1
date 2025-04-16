@@ -56,7 +56,7 @@ if [ $NODE_RANK -eq 0 ]; then
 
     # Start ray
     echo "Starting ray..."
-    ray start --head --node-ip-address 0.0.0.0 --num-gpus 8 --temp-dir ~/.cache/ray
+    ray start --head --node-ip-address $MASTER_ADDR --num-gpus 8 --temp-dir ~/.cache/ray
     sleep 30
 
     # Start remote reward model server
@@ -77,8 +77,6 @@ if [ $NODE_RANK -eq 0 ]; then
     --remote_rm_url verify_math \
     --actor_num_nodes 2 \
     --actor_num_gpus_per_node 8 \
-    --critic_num_nodes 2 \
-    --critic_num_gpus_per_node 8 \
     --vllm_num_engines 16 \
     --vllm_tensor_parallel_size 1 \
     --colocate_all_models \
@@ -99,11 +97,13 @@ if [ $NODE_RANK -eq 0 ]; then
     --prompt_max_len 8192 \
     --max_samples 100000 \
     --generate_max_len 768 \
+    --use_kl_loss \
     --kl_estimator k3 \
     --advantage_estimator group_norm \
     --zero_stage 3 \
     --bf16 \
     --actor_learning_rate 5e-7 \
+    --lr_warmup_steps 50 \
     --init_kl_coef 0.001 \
     --prompt_data ${DATASET_PATH} \
     --input_key message \
@@ -142,6 +142,7 @@ if [ $NODE_RANK -eq 0 ]; then
     # echo "ray stop"
     # echo "All logs are available in ${CUR_LOG_DIR}"
 else
+    sleep 10
     ray start --address="${MASTER_ADDR}:6379"
     sleep 60
     # 轮询检查任务状态
