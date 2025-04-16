@@ -7,6 +7,7 @@ from openrlhf.utils.logging_utils import init_logger
 
 logger = init_logger(__name__)
 
+from openrlhf.models.remote_rm.rm_func import VERIFABLE_REWARD_FUNCTION
 
 def request_api_wrapper(url, data, score_key="rewards", try_max_times=5):
     """Synchronous request API wrapper"""
@@ -36,7 +37,13 @@ def remote_rm_fn(api_url, queries, prompts, labels, score_key="rewards"):
     design is made optional.
     score_key: RM score key
     """
-    responses = request_api_wrapper(api_url, {"query": queries, "prompts": prompts, "labels": labels}, score_key)
+    # check if api_url is valid
+    if api_url.startswith("http"):
+        responses = request_api_wrapper(api_url, {"query": queries, "prompts": prompts, "labels": labels}, score_key)
+    elif api_url in VERIFABLE_REWARD_FUNCTION:
+        # if api_url is in verifiable_reward_function, use it as a function
+        responses = VERIFABLE_REWARD_FUNCTION[api_url](queries, prompts, labels)
+    
     return {k:torch.tensor(v) for k,v in responses.items()}
 
 
