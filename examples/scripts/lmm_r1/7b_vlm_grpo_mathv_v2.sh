@@ -60,12 +60,12 @@ if [ $NODE_RANK -eq 0 ]; then
     sleep 30
 
     # Start remote reward model server
-    echo "Starting remote reward model server..."
-    python -m openrlhf.models.remote_rm.math_verifier_2 \
-        --dataset "${DATASET_PATH}" \
-        --input_key message \
-        --prompt-template chatml 2>&1 | tee -a "${CUR_LOG_DIR}/remote_rm.log" &
-    REMOTE_RM_PID=$!
+    # echo "Starting remote reward model server..."
+    # python -m openrlhf.models.remote_rm.math_verifier_2 \
+    #     --dataset "${DATASET_PATH}" \
+    #     --input_key message \
+    #     --prompt-template chatml 2>&1 | tee -a "${CUR_LOG_DIR}/remote_rm.log" &
+    # REMOTE_RM_PID=$!
 
     # Start training
     echo "Starting training..."
@@ -74,7 +74,7 @@ if [ $NODE_RANK -eq 0 ]; then
     -- python -m openrlhf.cli.train_ppo_ray \
     --ref_num_nodes 2 \
     --ref_num_gpus_per_node 8 \
-    --remote_rm_url http://127.0.0.1:5000/get_reward \
+    --remote_rm_url verify_math \
     --actor_num_nodes 2 \
     --actor_num_gpus_per_node 8 \
     --critic_num_nodes 2 \
@@ -118,29 +118,29 @@ if [ $NODE_RANK -eq 0 ]; then
     --save_hf_ckpt \
     --disable_ds_ckpt \
     --load_checkpoint \
-    --use_tensorboard ${LOG_DIR} > >(tee -a "${CUR_LOG_DIR}/train.log") 2>&1 &
+    --use_tensorboard ${LOG_DIR} 
     #    --use_wandb ${WANDB_API_KEY} \
     #    --wandb_run_name ${MODEL_NAME} \
     #    --wandb_group "lmm-r1-training" \
 
-    TRAIN_PID=$!
+    # TRAIN_PID=$!
 
     # Record process IDs
-    echo "Remote RM PID: $REMOTE_RM_PID" > "${CUR_LOG_DIR}/process_pids.txt"
-    echo "Train PID: $TRAIN_PID" >> "${CUR_LOG_DIR}/process_pids.txt"
+    # echo "Remote RM PID: $REMOTE_RM_PID" > "${CUR_LOG_DIR}/process_pids.txt"
+    # echo "Train PID: $TRAIN_PID" >> "${CUR_LOG_DIR}/process_pids.txt"
 
     # Wait for training to complete
-    echo "Training is running in the background. Check logs at ${CUR_LOG_DIR}/train.log"
-    echo "To attach to the training process: wait $TRAIN_PID"
+    # echo "Training is running in the background. Check logs at ${CUR_LOG_DIR}/train.log"
+    # echo "To attach to the training process: wait $TRAIN_PID"
 
-    # Uncomment to wait for training to complete before exiting
-    # wait $TRAIN_PID
+    # # Uncomment to wait for training to complete before exiting
+    # # wait $TRAIN_PID
 
-    # Cleanup instructions
-    echo "When finished, clean up with:"
-    echo "pkill -f openrlhf"
-    echo "ray stop"
-    echo "All logs are available in ${CUR_LOG_DIR}"
+    # # Cleanup instructions
+    # echo "When finished, clean up with:"
+    # echo "pkill -f openrlhf"
+    # echo "ray stop"
+    # echo "All logs are available in ${CUR_LOG_DIR}"
 else
     ray start --address="${MASTER_ADDR}:6379"
     sleep 60
