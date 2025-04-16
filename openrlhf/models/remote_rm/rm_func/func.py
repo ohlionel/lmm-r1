@@ -1,15 +1,5 @@
-import json
-import os
-import random
 import re
-import numpy as np
-from argparse import ArgumentParser
-from multiprocessing import Process, Queue
-
-import Levenshtein
-from flask import Flask, jsonify, request
-from latex2sympy2_extended import NormalizationConfig
-from openrlhf.models.remote_rm.rm_func.func import LatexExtractionConfig, parse, verify
+from math_verify import LatexExtractionConfig, parse, verify
 from openrlhf.models.math_utils import is_equal
 
 format_pattern = r"^<think>(?:(?!</think>).)*</think>\s*<answer>(?:(?!</answer>).)*</answer>\Z"
