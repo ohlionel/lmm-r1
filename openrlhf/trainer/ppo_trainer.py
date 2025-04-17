@@ -216,6 +216,8 @@ class PPOTrainer(ABC):
             args.eval_steps = num_rollouts_per_episodes  # Evaluate once per epoch
         if args.save_steps == -1:
             args.save_steps = float("inf")  # do not save ckpt
+        if args.save_ds_ckpt_steps == -1:
+            args.save_ds_ckpt_steps = args.save_steps
 
         self.prompts_dataloader = prompts_dataloader
         self.pretrain_dataloader = pretrain_dataloader
@@ -595,7 +597,10 @@ class PPOTrainer(ABC):
         # TODO: save best model on dev, use loss/perplexity/others on whole dev dataset as metric
         if global_step % args.save_steps == 0:
             tag = f"global_step{global_step}"
-            self._save_checkpoint(args, tag, client_states)
+            if global_step % args.save_ds_ckpt_steps == 0:
+                self._save_checkpoint(args, tag, client_states, save_ds_ckpt=True)
+            else:
+                self._save_checkpoint(args, tag, client_states, save_ds_ckpt=False)
 
     def _save_checkpoint(self, args, tag, client_states):
         raise NotImplementedError("This method should be implemented by the subclass.")

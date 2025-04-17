@@ -311,9 +311,9 @@ class ActorPPOTrainer(PPOTrainer):
         torch.cuda.empty_cache()
         torch.distributed.barrier()
 
-    def _save_checkpoint(self, args, tag, client_states):
+    def _save_checkpoint(self, args, tag, client_states, save_ds_ckpt=True):
         # call remote critic
-        if not self.disable_ds_ckpt:
+        if not self.disable_ds_ckpt and save_ds_ckpt:
             if self.critic_train_remote:
                 ref = self.critic.save_checkpoint.remote(tag)
             self.strategy.save_ckpt(
@@ -332,7 +332,7 @@ class ActorPPOTrainer(PPOTrainer):
                 save_path,
             )
         # wait
-        if not self.disable_ds_ckpt:
+        if not self.disable_ds_ckpt and save_ds_ckpt:
             if self.critic_train_remote:
                 ray.get(ref)
         torch.distributed.barrier()
