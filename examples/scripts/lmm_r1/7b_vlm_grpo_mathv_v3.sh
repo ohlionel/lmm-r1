@@ -86,7 +86,7 @@ if [ $NODE_RANK -eq 0 ]; then
     --enable_prefix_caching \
     --pretrain ${PRETRAIN_MODEL_PATH} \
     --save_path $SAVE_PATH/$MODEL_CPK_NAME \
-    --micro_train_batch_size 8 \
+    --micro_train_batch_size 2 \
     --train_batch_size 64 \
     --micro_rollout_batch_size 8 \
     --rollout_batch_size 64 \
