@@ -5,7 +5,7 @@
 
 # Base paths - MODIFY THESE
 export WORKSPACE_DIR="/fs-computility/mllm/liangjianze/exp/lmm-r1"                                      # Path to project root directory
-export DATASET_PATH="./XC/data/mathv_demo.json"                                                         # Path to your dataset
+export DATASET_PATH="/fs-computility/mllm/shared/liangjianze/share_data/mathv_demo.json"                # Path to your dataset
 export PRETRAIN_MODEL_PATH="/fs-computility/mllm/shared/dongxiaoyi/share_model/Qwen2.5-VL-7B-Instruct"  # Path to pretrained model
 export WANDB_PROJECT="Baseline"                                                                         # Name for this project
 export MODEL_CPK_NAME="Qwen2.5-VL-7B-GRPO-MathV-demo-baseline_0418"                                     # Name for this training run
