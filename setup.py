@@ -67,6 +67,7 @@ setup(
             "data",
             "docs",
             "examples",
+            "XC",
         )
     ),
     description="A Ray-based High-performance RLHF framework.",

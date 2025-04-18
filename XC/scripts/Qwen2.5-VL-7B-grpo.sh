@@ -5,7 +5,7 @@
 
 # Base paths - MODIFY THESE
 export WORKSPACE_DIR="/fs-computility/mllm/liangjianze/exp/lmm-r1"                                      # Path to project root directory
-export DATASET_PATH="./XC/data/mathv_demo.json"                                                         # Path to your dataset
+export DATASET_PATH="/fs-computility/mllm/shared/liangjianze/share_data/mix_mathv.json"                                                         # Path to your dataset
 export PRETRAIN_MODEL_PATH="/fs-computility/mllm/shared/dongxiaoyi/share_model/Qwen2.5-VL-7B-Instruct"  # Path to pretrained model
 export WANDB_PROJECT="Baseline"                                                                         # Name for this project
 export MODEL_CPK_NAME="Qwen2.5-VL-7B-GRPO-MathV-demo-baseline_0418"                                          # Name for this training run
@@ -26,11 +26,11 @@ export CUR_LOG_DIR="${LOG_DIR}/${TIMESTAMP}"                                    
 # ======================================================
 export DEV_MODE=0 # Set to 1 for debug mode on single dev machine
 
-if [ ${DEV_MODE} eq 0]; then
+if [ ${DEV_MODE} -eq 0 ]; then
     export MASTER_ADDR=$MLP_WORKER_0_PRIMARY_HOST
     export NODE_RANK=${MLP_ROLE_INDEX:-0}
 else
-    export MASTER_ADDR="0.0.0.0"
+    export MASTER_ADDR="127.0.0.1"
     export NODE_RANK=0
 fi
 
@@ -82,7 +82,7 @@ if [ $NODE_RANK -eq 0 ]; then
     -- python -m openrlhf.cli.train_ppo_ray \
     --ref_num_nodes 4 \
     --ref_num_gpus_per_node 8 \
-    --remote_rm_url /XC/rm_fn/math_verify.py \
+    --remote_rm_url ./XC/rm_fn/math_verify.py \
     --actor_num_nodes 4 \
     --actor_num_gpus_per_node 8 \
     --vllm_num_engines 32 \
