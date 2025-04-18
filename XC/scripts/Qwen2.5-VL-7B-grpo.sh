@@ -24,8 +24,15 @@ export CUR_LOG_DIR="${LOG_DIR}/${TIMESTAMP}"                                    
 # ======================================================
 # VOLC SETTING
 # ======================================================
-export MASTER_ADDR=$MLP_WORKER_0_PRIMARY_HOST
-export NODE_RANK=${MLP_ROLE_INDEX:-0}
+export DEV_MODE=0 # Set to 1 for debug mode on single dev machine
+
+if [ ${DEV_MODE} eq 0]; then
+    export MASTER_ADDR=$MLP_WORKER_0_PRIMARY_HOST
+    export NODE_RANK=${MLP_ROLE_INDEX:-0}
+else
+    export MASTER_ADDR="0.0.0.0"
+    export NODE_RANK=0
+fi
 
 if [ $NODE_RANK -eq 0 ]; then
     # Get script PID and setup directories
