@@ -64,7 +64,7 @@ if [ $NODE_RANK -eq 0 ]; then
 
     # Start ray
     echo "Starting ray..."
-    ray start --head --node-ip-address $MASTER_ADDR --num-gpus 8 --temp-dir /fs-computility/mllm/shared/liangjianze/.cache/ray
+    ray start --head --node-ip-address $MASTER_ADDR --num-gpus 8 --temp-dir ~/.cache/ray
     sleep 30
 
     # Start remote reward model server
