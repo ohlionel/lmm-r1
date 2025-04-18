@@ -5,7 +5,8 @@ from XC.rm_fn.math_utils import is_equal
 
 # format_pattern = r"^<think>(?:(?!</think>).)*</think>\s*<answer>(?:(?!</answer>).)*</answer>\Z"
 response_prefix = r"<\|im_start\|>assistant\n"
-answer_pattern =r"(\\boxed{.*})"
+# answer_pattern =r"(\\boxed{.*})"
+answer_pattern =r"<answer>(.*?)</answer>"
 
 # def verify_format(content):
 #     """
