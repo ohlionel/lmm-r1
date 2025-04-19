@@ -95,9 +95,9 @@ if [ $NODE_RANK -eq 0 ]; then
     --pretrain ${PRETRAIN_MODEL_PATH} \
     --save_path ${SAVE_PATH} \
     --micro_train_batch_size 1 \
-    --train_batch_size 8 \
+    --train_batch_size 16 \
     --micro_rollout_batch_size 1 \
-    --rollout_batch_size 8 \
+    --rollout_batch_size 16 \
     --temperature 1.0 \
     --n_samples_per_prompt 2 \
     --max_epochs 1 \
