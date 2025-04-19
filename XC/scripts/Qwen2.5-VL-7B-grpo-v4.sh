@@ -64,7 +64,7 @@ if [ $NODE_RANK -eq 0 ]; then
 
     # Start ray
     echo "Starting ray..."
-    ray start --head --node-ip-address $MASTER_ADDR --num-gpus 8 --temp-dir /fs-computility/mllm/liangjianze/cache/ray
+    ray start --head --node-ip-address $MASTER_ADDR --num-gpus 8 --temp-dir ~/.cache/ray
     sleep 30
 
     # Start remote reward model server
@@ -94,12 +94,12 @@ if [ $NODE_RANK -eq 0 ]; then
     --enable_prefix_caching \
     --pretrain ${PRETRAIN_MODEL_PATH} \
     --save_path ${SAVE_PATH} \
-    --micro_train_batch_size 2 \
-    --train_batch_size 64 \
-    --micro_rollout_batch_size 8 \
-    --rollout_batch_size 64 \
+    --micro_train_batch_size 1 \
+    --train_batch_size 8 \
+    --micro_rollout_batch_size 1 \
+    --rollout_batch_size 8 \
     --temperature 1.0 \
-    --n_samples_per_prompt 4 \
+    --n_samples_per_prompt 2 \
     --max_epochs 1 \
     --num_episodes 1 \
     --prompt_max_len 8192 \
@@ -120,8 +120,8 @@ if [ $NODE_RANK -eq 0 ]; then
     --lambd 1 \
     --gamma 1 \
     --gradient_checkpointing \
-    --save_steps 600 \
-    --save_ds_ckpt_steps 600 \
+    --save_steps 1000 \
+    --save_ds_ckpt_steps 5000 \
     --ckpt_path ${CKPT_PATH} \
     --save_hf_ckpt \
     --load_checkpoint \
